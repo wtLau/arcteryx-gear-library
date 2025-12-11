@@ -1,77 +1,116 @@
 import Link from "next/link"
+import { styled } from '@linaria/react'
+
+
+const FooterContainer = styled.footer`
+  border-top: 1px solid var(--border);
+  background-color: var(--muted);
+  opacity: 0.4;
+`;
+
+const Container = styled.div`
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  max-width: 1200px;
+`;
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 2rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+`;
+
+const Section = styled.div`
+  h3 {
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+
+  h4 {
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+  }
+`;
+
+const List = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.875rem;
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+`;
+
+const FooterLink = styled(Link)`
+  cursor: pointer;
+  color: var(--muted-foreground);
+  transition: color 150ms;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--foreground);
+  }
+`;
+
+const ExternalLink = styled.a`
+  cursor: pointer;
+  color: var(--muted-foreground);
+  transition: color 150ms;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--foreground);
+  }
+`;
+
+const ContactList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+`;
+
+const Copyright = styled.div`
+  margin-top: 2rem;
+  border-top: 1px solid var(--border);
+  padding-top: 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+`;
 
 export default function Footer() {
   return (
-    <footer className="border-t bg-muted/40">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          {/* Brand */}
-          <div>
-            <h3 className="mb-4 text-lg font-bold">Makaya BNB</h3>
-            <p className="text-sm text-muted-foreground">
-              Your home away from home. Experience comfort and luxury in every stay.
-            </p>
-          </div>
+    <FooterContainer>
+      <Container>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="mb-4 text-sm font-semibold">Quick Links</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/rooms" className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground">
-                  Our Rooms
-                </Link>
-              </li>
-              <li>
-                <Link href="/booking" className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground">
-                  Book Now
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground">
-                  About Us
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="mb-4 text-sm font-semibold">Contact</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>Email: info@makayabnb.com</li>
-              <li>Phone: +63 XXX XXX XXXX</li>
-              <li>Address: Manila, Philippines</li>
-            </ul>
-          </div>
-
-          {/* Follow Us */}
-          <div>
-            <h4 className="mb-4 text-sm font-semibold">Follow Us</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#" className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground">
-                  Facebook
-                </a>
-              </li>
-              <li>
-                <a href="#" className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground">
-                  Instagram
-                </a>
-              </li>
-              <li>
-                <a href="#" className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground">
-                  Twitter
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Makaya BNB. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
+        <Copyright>
+          <p>All equipment is professionally maintained and includes insurance</p>
+        </Copyright>
+      </Container>
+    </FooterContainer>
   )
 }

@@ -71,8 +71,8 @@ export default function AboutPage() {
         <h1 className="mb-6 text-4xl font-bold md:text-5xl">
           Your Home Away From Home in Manila
         </h1>
-        <p className="mx-auto max-w-3xl text-lg text-muted-foreground">
-          Welcome to Makaya BNB, where comfort meets convenience. Located in the heart of Manila, 
+        <p>
+          Welcome to MakayaBNB, where comfort meets convenience. Located in the heart of Manila, 
           we offer premium accommodation with exceptional service for travelers seeking a memorable stay.
         </p>
       </div>
@@ -89,9 +89,9 @@ export default function AboutPage() {
                 grown into a collection of beautifully designed spaces that cater to various guest needs.
               </p>
               <p>
-                We believe that great accommodation is more than just a place to sleep. It's about 
+                We believe that great accommodation is more than just a place to sleep. Its about 
                 creating experiences, fostering connections, and making every guest feel valued. 
-                Whether you're here for business or leisure, we're committed to making your stay 
+                Whether youre here for business or leisure,  committed to making your stay 
                 exceptional.
               </p>
               <p>
