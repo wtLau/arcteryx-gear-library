@@ -262,7 +262,7 @@ const ViewAllButton = styled.div`
 
 export default function LandingPage() {
   const features = [
-    { icon: Wifi, title: "Search by Activity", description: "Browse by activity category, select a specific item, and check its availability calendar to book your preferred dates.", href: "/search" },
+    { icon: Wifi, title: "Search by Activity", description: "Browse by activity category, select a specific item, and check its availability calendar to book your preferred dates.", href: "/activity" },
     { icon: Wifi, title: "Search by Date", description: "Choose your desired rental dates first, then browse all available items across different categories that match your schedule.", href: "/search" },
   ]
 

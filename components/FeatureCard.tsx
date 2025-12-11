@@ -2,6 +2,7 @@ import { styled } from '@linaria/react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LucideIcon } from 'lucide-react'
+import Link from 'next/link'
 
 const StyledFeatureCard = styled(Card)`
   border-width: 2px;
@@ -33,7 +34,6 @@ interface FeatureCardProps {
   title: string;
   description: string;
   buttonText?: string;
-  onButtonClick?: () => void;
   href?: string;
 }
 
@@ -42,8 +42,7 @@ export default function FeatureCard({
   title, 
   description, 
   buttonText = "Get Started",
-  onButtonClick,
-  href 
+  href = "/booking"
 }: FeatureCardProps) {
   return (
     <StyledFeatureCard>
@@ -55,8 +54,10 @@ export default function FeatureCard({
         <CardDescription style={{ fontSize: '1rem' }}>
           {description}
         </CardDescription>
-        <Button onClick={onButtonClick}>
-          {buttonText}
+        <Button asChild>
+          <Link href={href}>
+            {buttonText}
+          </Link>
         </Button>
       </CardContent>
     </StyledFeatureCard>
