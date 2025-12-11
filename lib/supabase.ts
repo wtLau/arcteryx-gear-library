@@ -7,15 +7,14 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Database Types
-export type Room = {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  images: string[];
-  max_guests: number;
-  created_at: string;
-};
+export type Items = {
+  id: string
+  name: string
+  description: string
+  image: string
+
+  created_at: string
+}
 
 export type Booking = {
   id: string;

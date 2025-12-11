@@ -2,8 +2,8 @@
 
 import { Suspense, useEffect, useState, useCallback } from "react"
 import { useSearchParams } from "next/navigation"
-import { styled } from '@linaria/react'
-import { supabase, type Room } from "@/lib/supabase"
+import { format, differenceInDays } from "date-fns"
+import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -213,9 +213,9 @@ const LabelWithIcon = styled(Label)`
 
 function BookingForm() {
 	const searchParams = useSearchParams();
-	const roomIdFromUrl = searchParams.get("room");
+	const itemIdFromUrl = searchParams.get("item");
 
-	const [rooms, setRooms] = useState<Room[]>([]);
+	const [items, setItems] = useState<any[]>([]);
 	const [selectedRoom, setSelectedRoom] = useState<string>("");
 	const [checkIn, setCheckIn] = useState<string>("");
 	const [checkOut, setCheckOut] = useState<string>("");
@@ -232,12 +232,11 @@ function BookingForm() {
 	const fetchRooms = useCallback(async () => {
 		try {
 			const { data, error } = await supabase
-				.from("rooms")
+				.from("items")
 				.select("*")
-				.order("price", { ascending: true });
 
 			if (error) throw error;
-			setRooms(data || []);
+			setItems(data || []);
 		} catch (error) {
 			console.error("Error fetching rooms:", error);
 		}
@@ -248,25 +247,15 @@ function BookingForm() {
 	}, [fetchRooms]);
 
 	useEffect(() => {
-		if (roomIdFromUrl && rooms.length > 0) {
-			setSelectedRoom(roomIdFromUrl);
+		if (itemIdFromUrl && items.length > 0) {
+			setSelectedRoom(itemIdFromUrl);
 		}
-	}, [roomIdFromUrl, rooms]);
+	}, [itemIdFromUrl, items]);
 
-	const selectedRoomData = rooms.find((r) => r.id === selectedRoom);
-	
-	// Calculate nights (simplified without date-fns)
-	const calculateNights = (checkInStr: string, checkOutStr: string) => {
-		if (!checkInStr || !checkOutStr) return 0;
-		const checkInDate = new Date(checkInStr);
-		const checkOutDate = new Date(checkOutStr);
-		const diffTime = checkOutDate.getTime() - checkInDate.getTime();
-		const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-		return diffDays > 0 ? diffDays : 0;
-	};
-
-	const nights = calculateNights(checkIn, checkOut);
-	const totalPrice = selectedRoomData && nights > 0 ? selectedRoomData.price * nights : 0;
+	const selectedItemData = items.find((r) => r.id === selectedRoom);
+	const nights = checkIn && checkOut ? differenceInDays(checkOut, checkIn) : 0;
+	const totalPrice =
+		selectedItemData && nights > 0 ? selectedItemData.price * nights : 0;
 
 	const isFormValid =
 		selectedRoom &&
@@ -350,32 +339,35 @@ function BookingForm() {
 										<p style={{ color: 'var(--muted-foreground)' }}>Loading rooms...</p>
 									}
 								>
-									<SelectInput 
-										value={selectedRoom} 
-										onChange={(e) => setSelectedRoom(e.target.value)}
-									>
-										<option value="">Select a room</option>
-										{rooms.map((room) => (
-											<option key={room.id} value={room.id}>
-												{room.name} - ₱{room.price.toLocaleString()}/night (up to {room.max_guests} guests)
-											</option>
-										))}
-									</SelectInput>
+									<Select value={selectedRoom} onValueChange={setSelectedRoom}>
+										<SelectTrigger>
+											<SelectValue placeholder="Select a room" />
+										</SelectTrigger>
+										<SelectContent>
+											{items.map((item) => (
+												<SelectItem key={item.id} value={item.id}>
+													{item.name}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
 								</Suspense>
-								{selectedRoomData && (
-									<RoomInfo>
-										<h4>{selectedRoomData.name}</h4>
-										<p>{selectedRoomData.description}</p>
-										<RoomDetails>
+								{selectedItemData && (
+									<div className="mt-4 rounded-lg border p-4">
+										<h4 className="font-semibold">{selectedItemData.name}</h4>
+										<p className="text-sm text-muted-foreground">
+											{selectedItemData.description}
+										</p>
+										<div className="mt-2 flex items-center gap-4">
 											<Badge variant="secondary">
-												<Users style={{ marginRight: '0.25rem', width: '0.75rem', height: '0.75rem' }} />
-												Up to {selectedRoomData.max_guests} guests
+												<Users className="mr-1 h-3 w-3" />
+												Up to {selectedItemData.max_guests} guests
 											</Badge>
-											<PriceText>
-												₱{selectedRoomData.price.toLocaleString()}/night
-											</PriceText>
-										</RoomDetails>
-									</RoomInfo>
+											<span className="font-semibold text-primary">
+												₱{selectedItemData.price.toLocaleString()}/night
+											</span>
+										</div>
+									</div>
 								)}
 							</CardContent>
 						</Card>
@@ -541,12 +533,12 @@ function BookingForm() {
 							<CardHeader>
 								<CardTitle>Booking Summary</CardTitle>
 							</CardHeader>
-							<CardContent style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-								{selectedRoomData ? (
+							<CardContent className="space-y-4">
+								{selectedItemData ? (
 									<>
 										<div>
-											<p style={{ fontSize: '0.875rem', color: 'var(--muted-foreground)' }}>Room</p>
-											<p style={{ fontWeight: '600' }}>{selectedRoomData.name}</p>
+											<p className="text-sm text-muted-foreground">Room</p>
+											<p className="font-semibold">{selectedItemData.name}</p>
 										</div>
 
 										{checkIn && (
@@ -568,10 +560,14 @@ function BookingForm() {
 												<div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
 													<div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
 														<span>
-															₱{selectedRoomData.price.toLocaleString()} × {nights} {nights === 1 ? "night" : "nights"}
+															₱{selectedItemData.price.toLocaleString()} ×{" "}
+															{nights} {nights === 1 ? "night" : "nights"}
 														</span>
 														<span>
-															₱{(selectedRoomData.price * nights).toLocaleString()}
+															₱
+															{(
+																selectedItemData.price * nights
+															).toLocaleString()}
 														</span>
 													</div>
 												</div>
