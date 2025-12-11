@@ -2,13 +2,14 @@
 
 import { Suspense, useEffect, useState, useCallback } from "react"
 import { useSearchParams } from "next/navigation"
-import { format, differenceInDays } from "date-fns"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import { styled } from "@linaria/react";
 import { Calendar as CalendarIcon, Users, Mail, Phone, MessageSquare } from "lucide-react"
 
 const Container = styled.div`
@@ -253,9 +254,6 @@ function BookingForm() {
 	}, [itemIdFromUrl, items]);
 
 	const selectedItemData = items.find((r) => r.id === selectedRoom);
-	const nights = checkIn && checkOut ? differenceInDays(checkOut, checkIn) : 0;
-	const totalPrice =
-		selectedItemData && nights > 0 ? selectedItemData.price * nights : 0;
 
 	const isFormValid =
 		selectedRoom &&
@@ -279,9 +277,6 @@ function BookingForm() {
 					full_name: formData.fullName,
 					email: formData.email,
 					phone: formData.phone,
-					check_in: checkIn,
-					check_out: checkOut,
-					total_price: totalPrice,
 					status: "pending",
 				})
 				.select()
@@ -411,16 +406,6 @@ function BookingForm() {
 										/>
 									</div>
 								</DateInputs>
-								{checkIn && checkOut && nights > 0 && (
-									<DateSummary>
-										<p className="nights">
-											{nights} {nights === 1 ? "night" : "nights"} selected
-										</p>
-										<p className="dates">
-											{checkIn} - {checkOut}
-										</p>
-									</DateSummary>
-								)}
 							</CardContent>
 						</Card>
 
@@ -540,48 +525,6 @@ function BookingForm() {
 											<p className="text-sm text-muted-foreground">Room</p>
 											<p className="font-semibold">{selectedItemData.name}</p>
 										</div>
-
-										{checkIn && (
-											<div>
-												<p style={{ fontSize: '0.875rem', color: 'var(--muted-foreground)' }}>Check-in</p>
-												<p style={{ fontWeight: '500' }}>{checkIn}</p>
-											</div>
-										)}
-
-										{checkOut && (
-											<div>
-												<p style={{ fontSize: '0.875rem', color: 'var(--muted-foreground)' }}>Check-out</p>
-												<p style={{ fontWeight: '500' }}>{checkOut}</p>
-											</div>
-										)}
-
-										{nights > 0 && (
-											<>
-												<div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
-													<div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
-														<span>
-															₱{selectedItemData.price.toLocaleString()} ×{" "}
-															{nights} {nights === 1 ? "night" : "nights"}
-														</span>
-														<span>
-															₱
-															{(
-																selectedItemData.price * nights
-															).toLocaleString()}
-														</span>
-													</div>
-												</div>
-
-												<div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
-													<div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.125rem', fontWeight: '700' }}>
-														<span>Total</span>
-														<span style={{ color: 'var(--primary)' }}>
-															₱{totalPrice.toLocaleString()}
-														</span>
-													</div>
-												</div>
-											</>
-										)}
 									</>
 								) : (
 									<p style={{ fontSize: '0.875rem', color: 'var(--muted-foreground)' }}>

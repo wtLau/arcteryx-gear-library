@@ -168,8 +168,8 @@ export default function RoomsPage() {
             <Card key={room.id} className="overflow-hidden transition-all hover:shadow-xl">
               <div className="aspect-video bg-gradient-to-br from-primary/30 to-secondary/30">
                 {room.images?.[0] && (
-                  <img 
-                    src={room.images[0]} 
+                  <img
+                    src={room.images[0]}
                     alt={room.name}
                     className="h-full w-full object-cover"
                   />
