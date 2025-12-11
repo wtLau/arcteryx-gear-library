@@ -41,7 +41,7 @@ export type Item = {
   image: string;
 };
 
-type Category = {
+export type Category = {
   id: string;
   name:
   | "Camping"
