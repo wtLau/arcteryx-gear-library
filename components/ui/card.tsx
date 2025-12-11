@@ -30,6 +30,7 @@ const cardTitleStyles: React.CSSProperties = {
 const cardDescriptionStyles: React.CSSProperties = {
   color: 'var(--muted-foreground)',
   fontSize: '0.875rem',
+  marginBottom: '10px',
 };
 
 const cardContentStyles: React.CSSProperties = {
