@@ -23,12 +23,12 @@ create table items (
 );
 
 -- Not sure what's this for
--- -- Create item_categories join table (many-to-many)
--- create table item_categories (
---   item_id uuid references items(id) on delete cascade,
---   category_id uuid references categories(id) on delete cascade,
---   primary key (item_id, category_id)
--- );
+-- Create item_categories join table (many-to-many)
+create table item_categories (
+  item_id uuid references items(id) on delete cascade,
+  category_id uuid references categories(id) on delete cascade,
+  primary key (item_id, category_id)
+);
 
 -- Create users table
 create table users (

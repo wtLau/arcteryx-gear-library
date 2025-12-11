@@ -5,9 +5,11 @@ import { useSearchParams } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+// import { Calendar } from "@/components/ui/calendar"
 import { Badge } from "@/components/ui/badge"
 import { styled } from "@linaria/react";
 import { Calendar as CalendarIcon, Users, Mail, Phone, MessageSquare } from "lucide-react"
@@ -382,28 +384,26 @@ function BookingForm() {
 											<CalendarIcon style={{ width: '1rem', height: '1rem' }} />
 											Check-in
 										</LabelWithIcon>
-										<Input
-											id="check-in"
-											type="date"
-											value={checkIn}
-											onChange={(e) => setCheckIn(e.target.value)}
-											min={new Date().toISOString().split('T')[0]}
-											required
-										/>
+										{/* <Calendar
+											mode="single"
+											selected={checkIn}
+											onSelect={setCheckIn}
+											disabled={(date) => date < new Date()}
+											className="rounded-md border"
+										/> */}
 									</div>
 									<div>
 										<LabelWithIcon htmlFor="check-out">
 											<CalendarIcon style={{ width: '1rem', height: '1rem' }} />
 											Check-out
 										</LabelWithIcon>
-										<Input
-											id="check-out"
-											type="date"
-											value={checkOut}
-											onChange={(e) => setCheckOut(e.target.value)}
-											min={checkIn || new Date().toISOString().split('T')[0]}
-											required
-										/>
+										{/* <Calendar
+											mode="single"
+											selected={checkOut}
+											onSelect={setCheckOut}
+											disabled={(date) => !checkIn || date <= checkIn}
+											className="rounded-md border"
+										/> */}
 									</div>
 								</DateInputs>
 							</CardContent>

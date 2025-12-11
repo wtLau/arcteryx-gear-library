@@ -167,12 +167,6 @@ export const StyledDayPicker = styled(DayPicker)`
   }
 `;
 
-//
-// ──────────────────────────────────────────────────────────────
-//   Chevron button (nav)
-// ──────────────────────────────────────────────────────────────
-//
-
 export const ChevronButton = styled(Button)`
   width: var(--cell-size);
   height: var(--cell-size);
@@ -190,12 +184,6 @@ export const ChevronButton = styled(Button)`
     height: 1rem;
   }
 `;
-
-//
-// ──────────────────────────────────────────────────────────────
-//   Day button styling
-// ──────────────────────────────────────────────────────────────
-//
 
 export const StyledDayButton = styled(Button)`
   width: 100%;

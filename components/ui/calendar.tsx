@@ -11,7 +11,6 @@ import {
 
 import {
   DayPicker,
-  type DayPickerProps,
   type DayButtonProps,
   type ChevronProps,
 } from "react-day-picker";
@@ -44,10 +43,7 @@ function Calendar({ components = {}, ...props }: CalendarProps) {
         {...props}
         showOutsideDays={props.showOutsideDays ?? true as boolean}
         components={{
-          /** Root wrapper override — keeping layout */
           Root: (rootProps: any) => <div {...rootProps} />,
-
-          /** Chevron navigation override */
           Chevron: ({ orientation, ...iconProps }: any) => {
             const Icon =
               orientation === "left"
@@ -62,11 +58,7 @@ function Calendar({ components = {}, ...props }: CalendarProps) {
               </ChevronButton>
             );
           },
-
-          /** Replace DayButton globally */
           DayButton: CalendarDayButton,
-
-          /** User overrides come last */
           ...components,
         }}
       />
