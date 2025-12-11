@@ -1,61 +1,96 @@
 "use client"
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
+import { cx } from "@/lib/utils"
 
-import { cn } from "@/lib/utils"
+const getButtonStyles = (variant: string = "default", size: string = "default") => {
+  const baseStyles: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    whiteSpace: 'nowrap',
+    borderRadius: 'calc(var(--radius) - 2px)',
+    fontSize: '0.875rem',
+    fontWeight: '500',
+    transition: 'all 150ms cubic-bezier(0.4, 0, 0.2, 1)',
+    border: 'none',
+    cursor: 'pointer',
+  };
 
-const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-  {
-    variants: {
-      variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
-      },
-      size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
-        "icon-sm": "size-8",
-        "icon-lg": "size-10",
-      },
+  // Size styles
+  const sizeStyles: Record<string, React.CSSProperties> = {
+    default: { height: '2.5rem', padding: '0.5rem 1rem' },
+    sm: { height: '2.25rem', padding: '0 0.75rem' },
+    lg: { height: '2.75rem', padding: '0.5rem 2rem' },
+    icon: { height: '2.5rem', width: '2.5rem' },
+  };
+
+  // Variant styles
+  const variantStyles: Record<string, React.CSSProperties> = {
+    default: {
+      backgroundColor: 'var(--primary)',
+      color: 'var(--primary-foreground)',
     },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
+    destructive: {
+      backgroundColor: 'var(--destructive)',
+      color: 'var(--destructive-foreground)',
     },
+    outline: {
+      border: '1px solid var(--border)',
+      backgroundColor: 'var(--background)',
+      color: 'var(--foreground)',
+    },
+    secondary: {
+      backgroundColor: 'var(--secondary)',
+      color: 'var(--secondary-foreground)',
+    },
+    ghost: {
+      backgroundColor: 'transparent',
+      color: 'var(--foreground)',
+    },
+    link: {
+      backgroundColor: 'transparent',
+      color: 'var(--primary)',
+      textDecoration: 'underline',
+      textUnderlineOffset: '4px',
+    },
+  };
+
+  return {
+    ...baseStyles,
+    ...sizeStyles[size],
+    ...variantStyles[variant],
+  };
+};
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  asChild?: boolean
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
+  size?: "default" | "sm" | "lg" | "icon"
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant = "default", size = "default", asChild = false, style, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    const buttonStyles = getButtonStyles(variant, size)
+    
+    return (
+      <Comp
+        className={cx(className)}
+        ref={ref}
+        style={{ ...buttonStyles, ...style }}
+        {...props}
+      />
+    )
   }
 )
+Button.displayName = "Button"
 
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
-  const Comp = asChild ? Slot : "button"
-
-  return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
-}
+// Export a function that returns variant styles for compatibility
+const buttonVariants = ({ variant = "default", size = "default" }: { variant?: string; size?: string } = {}) => {
+  // Return empty string for now since we're using styled components
+  return "";
+};
 
 export { Button, buttonVariants }

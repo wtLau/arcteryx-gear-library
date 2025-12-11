@@ -1,37 +1,109 @@
 import Link from "next/link"
+import { styled } from '@linaria/react'
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 
+const Nav = styled.nav`
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--background);
+  opacity: 0.95;
+  backdrop-filter: blur(8px);
+
+  @supports (backdrop-filter: blur(8px)) {
+    background-color: var(--background);
+    opacity: 0.6;
+  }
+`;
+
+const Container = styled.div`
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  height: 4rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  max-width: 1200px;
+`;
+
+const Logo = styled(Link)`
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: inherit;
+
+  span {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+`;
+
+const NavLinks = styled.div`
+  display: none;
+  align-items: center;
+  gap: 1.5rem;
+
+  @media (min-width: 768px) {
+    display: flex;
+  }
+`;
+
+const NavLink = styled(Link)`
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 150ms;
+  text-decoration: none;
+  color: var(--foreground);
+
+  &:hover {
+    color: var(--primary);
+  }
+`;
+
+const Actions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
 export default function Navbar() {
   return (
-    <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="flex cursor-pointer items-center space-x-2">
-          <span className="text-2xl font-bold">Makaya BNB</span>
-        </Link>
+    <Nav>
+      <Container>
+        <Logo href="/">
+          <span>Makaya BNB</span>
+        </Logo>
         
-        <div className="hidden items-center space-x-6 md:flex">
-          <Link href="/" className="cursor-pointer text-sm font-medium transition-colors hover:text-primary">
+        <NavLinks>
+          <NavLink href="/">
             Home
-          </Link>
-          <Link href="/rooms" className="cursor-pointer text-sm font-medium transition-colors hover:text-primary">
+          </NavLink>
+          <NavLink href="/rooms">
             Rooms
-          </Link>
-          <Link href="/about" className="cursor-pointer text-sm font-medium transition-colors hover:text-primary">
+          </NavLink>
+          <NavLink href="/about">
             About
-          </Link>
-          <Link href="/contact" className="cursor-pointer text-sm font-medium transition-colors hover:text-primary">
+          </NavLink>
+          <NavLink href="/contact">
             Contact
-          </Link>
-        </div>
+          </NavLink>
+        </NavLinks>
 
-        <div className="flex items-center space-x-4">
+        <Actions>
           <ThemeToggle />
           <Button asChild>
             <Link href="/booking">Book Now</Link>
           </Button>
-        </div>
-      </div>
-    </nav>
+        </Actions>
+      </Container>
+    </Nav>
   )
 }
