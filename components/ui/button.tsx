@@ -88,7 +88,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button"
 
 // Export a function that returns variant styles for compatibility
-export const buttonVariants = ({ variant = "default", size = "default" }: { variant?: string; size?: string } = {}) => {
+const buttonVariants = ({ variant = "default", size = "default" }: { variant?: string; size?: string } = {}) => {
   // Return empty string for now since we're using styled components
   return "";
 };
