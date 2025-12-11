@@ -8,6 +8,8 @@ import {
   Waves,
   Pickaxe
 } from "lucide-react"
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 const PageContainer = styled.div`
   display: flex;
@@ -116,6 +118,41 @@ const ActivityGrid = styled.div`
 `;
 
 export default function ActivityPage() {
+      const [category, setCategory] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCategory();
+  }, []);
+
+  async function fetchCategory() {
+    try {
+      const { data, error } = await supabase.from("items").select(`
+      *,
+      item_categories (
+        categories (
+          name
+        )
+      )
+    `);
+
+      const flattenedData = data?.map((item) => ({
+        ...item,
+        // Extract the first category name
+        category: item.item_categories[0]?.categories?.name || null,
+      }));
+
+      console.log(flattenedData);
+
+      if (error) throw error;
+      setCategory(flattenedData as any);
+    } catch (error) {
+      console.error("Error fetching category:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const activities = [
     {
       icon: Tent,
