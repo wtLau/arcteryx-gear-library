@@ -74,7 +74,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "default", size = "default", asChild = false, style, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
     const buttonStyles = getButtonStyles(variant, size)
-    
+
     return (
       <Comp
         className={cx(className)}
@@ -93,4 +93,4 @@ const buttonVariants = ({ variant = "default", size = "default" }: { variant?: s
   return "";
 };
 
-export { Button, buttonVariants }
+export { Button }

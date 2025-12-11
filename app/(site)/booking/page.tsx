@@ -2,13 +2,16 @@
 
 import { Suspense, useEffect, useState, useCallback } from "react"
 import { useSearchParams } from "next/navigation"
-import { styled } from '@linaria/react'
-import { supabase, type Room } from "@/lib/supabase"
+import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+// import { Calendar } from "@/components/ui/calendar"
 import { Badge } from "@/components/ui/badge"
+import { styled } from "@linaria/react";
 import { Calendar as CalendarIcon, Users, Mail, Phone, MessageSquare } from "lucide-react"
 
 const Container = styled.div`
@@ -213,9 +216,9 @@ const LabelWithIcon = styled(Label)`
 
 function BookingForm() {
 	const searchParams = useSearchParams();
-	const roomIdFromUrl = searchParams.get("room");
+	const itemIdFromUrl = searchParams.get("item");
 
-	const [rooms, setRooms] = useState<Room[]>([]);
+	const [items, setItems] = useState<any[]>([]);
 	const [selectedRoom, setSelectedRoom] = useState<string>("");
 	const [checkIn, setCheckIn] = useState<string>("");
 	const [checkOut, setCheckOut] = useState<string>("");
@@ -232,12 +235,11 @@ function BookingForm() {
 	const fetchRooms = useCallback(async () => {
 		try {
 			const { data, error } = await supabase
-				.from("rooms")
+				.from("items")
 				.select("*")
-				.order("price", { ascending: true });
 
 			if (error) throw error;
-			setRooms(data || []);
+			setItems(data || []);
 		} catch (error) {
 			console.error("Error fetching rooms:", error);
 		}
@@ -248,25 +250,12 @@ function BookingForm() {
 	}, [fetchRooms]);
 
 	useEffect(() => {
-		if (roomIdFromUrl && rooms.length > 0) {
-			setSelectedRoom(roomIdFromUrl);
+		if (itemIdFromUrl && items.length > 0) {
+			setSelectedRoom(itemIdFromUrl);
 		}
-	}, [roomIdFromUrl, rooms]);
+	}, [itemIdFromUrl, items]);
 
-	const selectedRoomData = rooms.find((r) => r.id === selectedRoom);
-	
-	// Calculate nights (simplified without date-fns)
-	const calculateNights = (checkInStr: string, checkOutStr: string) => {
-		if (!checkInStr || !checkOutStr) return 0;
-		const checkInDate = new Date(checkInStr);
-		const checkOutDate = new Date(checkOutStr);
-		const diffTime = checkOutDate.getTime() - checkInDate.getTime();
-		const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-		return diffDays > 0 ? diffDays : 0;
-	};
-
-	const nights = calculateNights(checkIn, checkOut);
-	const totalPrice = selectedRoomData && nights > 0 ? selectedRoomData.price * nights : 0;
+	const selectedItemData = items.find((r) => r.id === selectedRoom);
 
 	const isFormValid =
 		selectedRoom &&
@@ -290,9 +279,6 @@ function BookingForm() {
 					full_name: formData.fullName,
 					email: formData.email,
 					phone: formData.phone,
-					check_in: checkIn,
-					check_out: checkOut,
-					total_price: totalPrice,
 					status: "pending",
 				})
 				.select()
@@ -350,32 +336,35 @@ function BookingForm() {
 										<p style={{ color: 'var(--muted-foreground)' }}>Loading rooms...</p>
 									}
 								>
-									<SelectInput 
-										value={selectedRoom} 
-										onChange={(e) => setSelectedRoom(e.target.value)}
-									>
-										<option value="">Select a room</option>
-										{rooms.map((room) => (
-											<option key={room.id} value={room.id}>
-												{room.name} - ₱{room.price.toLocaleString()}/night (up to {room.max_guests} guests)
-											</option>
-										))}
-									</SelectInput>
+									<Select value={selectedRoom} onValueChange={setSelectedRoom}>
+										<SelectTrigger>
+											<SelectValue placeholder="Select a room" />
+										</SelectTrigger>
+										<SelectContent>
+											{items.map((item) => (
+												<SelectItem key={item.id} value={item.id}>
+													{item.name}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
 								</Suspense>
-								{selectedRoomData && (
-									<RoomInfo>
-										<h4>{selectedRoomData.name}</h4>
-										<p>{selectedRoomData.description}</p>
-										<RoomDetails>
+								{selectedItemData && (
+									<div className="mt-4 rounded-lg border p-4">
+										<h4 className="font-semibold">{selectedItemData.name}</h4>
+										<p className="text-sm text-muted-foreground">
+											{selectedItemData.description}
+										</p>
+										<div className="mt-2 flex items-center gap-4">
 											<Badge variant="secondary">
-												<Users style={{ marginRight: '0.25rem', width: '0.75rem', height: '0.75rem' }} />
-												Up to {selectedRoomData.max_guests} guests
+												<Users className="mr-1 h-3 w-3" />
+												Up to {selectedItemData.max_guests} guests
 											</Badge>
-											<PriceText>
-												₱{selectedRoomData.price.toLocaleString()}/night
-											</PriceText>
-										</RoomDetails>
-									</RoomInfo>
+											<span className="font-semibold text-primary">
+												₱{selectedItemData.price.toLocaleString()}/night
+											</span>
+										</div>
+									</div>
 								)}
 							</CardContent>
 						</Card>
@@ -395,40 +384,28 @@ function BookingForm() {
 											<CalendarIcon style={{ width: '1rem', height: '1rem' }} />
 											Check-in
 										</LabelWithIcon>
-										<Input
-											id="check-in"
-											type="date"
-											value={checkIn}
-											onChange={(e) => setCheckIn(e.target.value)}
-											min={new Date().toISOString().split('T')[0]}
-											required
-										/>
+										{/* <Calendar
+											mode="single"
+											selected={checkIn}
+											onSelect={setCheckIn}
+											disabled={(date) => date < new Date()}
+											className="rounded-md border"
+										/> */}
 									</div>
 									<div>
 										<LabelWithIcon htmlFor="check-out">
 											<CalendarIcon style={{ width: '1rem', height: '1rem' }} />
 											Check-out
 										</LabelWithIcon>
-										<Input
-											id="check-out"
-											type="date"
-											value={checkOut}
-											onChange={(e) => setCheckOut(e.target.value)}
-											min={checkIn || new Date().toISOString().split('T')[0]}
-											required
-										/>
+										{/* <Calendar
+											mode="single"
+											selected={checkOut}
+											onSelect={setCheckOut}
+											disabled={(date) => !checkIn || date <= checkIn}
+											className="rounded-md border"
+										/> */}
 									</div>
 								</DateInputs>
-								{checkIn && checkOut && nights > 0 && (
-									<DateSummary>
-										<p className="nights">
-											{nights} {nights === 1 ? "night" : "nights"} selected
-										</p>
-										<p className="dates">
-											{checkIn} - {checkOut}
-										</p>
-									</DateSummary>
-								)}
 							</CardContent>
 						</Card>
 
@@ -541,51 +518,13 @@ function BookingForm() {
 							<CardHeader>
 								<CardTitle>Booking Summary</CardTitle>
 							</CardHeader>
-							<CardContent style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-								{selectedRoomData ? (
+							<CardContent className="space-y-4">
+								{selectedItemData ? (
 									<>
 										<div>
-											<p style={{ fontSize: '0.875rem', color: 'var(--muted-foreground)' }}>Room</p>
-											<p style={{ fontWeight: '600' }}>{selectedRoomData.name}</p>
+											<p className="text-sm text-muted-foreground">Room</p>
+											<p className="font-semibold">{selectedItemData.name}</p>
 										</div>
-
-										{checkIn && (
-											<div>
-												<p style={{ fontSize: '0.875rem', color: 'var(--muted-foreground)' }}>Check-in</p>
-												<p style={{ fontWeight: '500' }}>{checkIn}</p>
-											</div>
-										)}
-
-										{checkOut && (
-											<div>
-												<p style={{ fontSize: '0.875rem', color: 'var(--muted-foreground)' }}>Check-out</p>
-												<p style={{ fontWeight: '500' }}>{checkOut}</p>
-											</div>
-										)}
-
-										{nights > 0 && (
-											<>
-												<div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
-													<div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
-														<span>
-															₱{selectedRoomData.price.toLocaleString()} × {nights} {nights === 1 ? "night" : "nights"}
-														</span>
-														<span>
-															₱{(selectedRoomData.price * nights).toLocaleString()}
-														</span>
-													</div>
-												</div>
-
-												<div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
-													<div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.125rem', fontWeight: '700' }}>
-														<span>Total</span>
-														<span style={{ color: 'var(--primary)' }}>
-															₱{totalPrice.toLocaleString()}
-														</span>
-													</div>
-												</div>
-											</>
-										)}
 									</>
 								) : (
 									<p style={{ fontSize: '0.875rem', color: 'var(--muted-foreground)' }}>

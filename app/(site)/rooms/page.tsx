@@ -2,69 +2,48 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { supabase, type Room } from "@/lib/supabase"
+import { supabase,  type Items } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Users, Wifi, Wind, Coffee, Car, Waves, Utensils } from "lucide-react"
+import { Wifi, Wind, Coffee, Car, Waves, Utensils } from "lucide-react"
 
 export default function RoomsPage() {
-  const [rooms, setRooms] = useState<Room[]>([])
-  const [filteredRooms, setFilteredRooms] = useState<Room[]>([])
+  const [items, setItems] = useState<Items[]>([])
+  const [filteredItems, setFilteredItems] = useState<Items[]>([])
   const [loading, setLoading] = useState(true)
   const [sortBy, setSortBy] = useState<string>("name")
   const [filterGuests, setFilterGuests] = useState<string>("all")
 
   useEffect(() => {
-    fetchRooms()
+    fetchItems()
   }, [])
 
-  useEffect(() => {
-    applyFilters()
-  }, [rooms, sortBy, filterGuests])
 
-  async function fetchRooms() {
+  async function fetchItems() {
     try {
       const { data, error } = await supabase
-        .from('rooms')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      setRooms(data || [])
+        .from("items")
+        .select(`
+          id,
+          name,
+          description,
+          image,
+          created_at,
+          item_categories (
+            category_id,
+            categories (id, name)
+          )
+        `);
+      if (error) throw error;
+      console.log(">>> data: ", data);
+      setItems(data || [])
     } catch (error) {
       console.error('Error fetching rooms:', error)
     } finally {
       setLoading(false)
     }
-  }
-
-  function applyFilters() {
-    let filtered = [...rooms]
-
-    // Filter by guests
-    if (filterGuests !== "all") {
-      const guestCount = parseInt(filterGuests)
-      filtered = filtered.filter(room => room.max_guests >= guestCount)
-    }
-
-    // Sort
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "price-low":
-          return a.price - b.price
-        case "price-high":
-          return b.price - a.price
-        case "guests":
-          return b.max_guests - a.max_guests
-        default:
-          return a.name.localeCompare(b.name)
-      }
-    })
-
-    setFilteredRooms(filtered)
   }
 
   const amenities = [
@@ -123,7 +102,7 @@ export default function RoomsPage() {
         </div>
 
         <div className="text-sm text-muted-foreground">
-          Showing {filteredRooms.length} {filteredRooms.length === 1 ? 'room' : 'rooms'}
+          Showing {filteredItems.length} {filteredItems.length === 1 ? 'room' : 'rooms'}
         </div>
       </div>
 
@@ -146,7 +125,7 @@ export default function RoomsPage() {
       )}
 
       {/* Rooms Grid */}
-      {!loading && filteredRooms.length === 0 && (
+      {!loading && filteredItems.length === 0 && (
         <div className="rounded-lg border border-dashed p-12 text-center">
           <p className="text-lg text-muted-foreground">No rooms found matching your criteria.</p>
           <Button
@@ -162,35 +141,24 @@ export default function RoomsPage() {
         </div>
       )}
 
-      {!loading && filteredRooms.length > 0 && (
+      {!loading && filteredItems.length > 0 && (
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {filteredRooms.map((room) => (
-            <Card key={room.id} className="overflow-hidden transition-all hover:shadow-xl">
+          {filteredItems.map((item) => (
+            <Card key={item.id} className="overflow-hidden transition-all hover:shadow-xl">
               <div className="aspect-video bg-gradient-to-br from-primary/30 to-secondary/30">
-                {room.images?.[0] && (
-                  <img 
-                    src={room.images[0]} 
-                    alt={room.name}
+                {item.image&& (
+                  <img
+                    src={item.image}
+                    alt={item.name}
                     className="h-full w-full object-cover"
                   />
                 )}
               </div>
               <CardHeader>
-                <CardTitle>{room.name}</CardTitle>
-                <CardDescription>{room.description}</CardDescription>
+                <CardTitle>{item.name}</CardTitle>
+                <CardDescription>{item.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="mb-4 flex items-center justify-between">
-                  <div>
-                    <p className="text-3xl font-bold text-primary">₱{room.price.toLocaleString()}</p>
-                    <p className="text-sm text-muted-foreground">per night</p>
-                  </div>
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <Users className="h-4 w-4" />
-                    {room.max_guests} guests
-                  </Badge>
-                </div>
-
                 <div className="space-y-2">
                   <p className="text-sm font-semibold">Amenities:</p>
                   <div className="flex flex-wrap gap-2">
@@ -205,10 +173,10 @@ export default function RoomsPage() {
               </CardContent>
               <CardFooter className="flex gap-2">
                 <Button asChild className="flex-1">
-                  <Link href={`/booking?room=${room.id}`}>Book Now</Link>
+                  <Link href={`/booking?room=${item.id}`}>Book Now</Link>
                 </Button>
                 <Button variant="outline" asChild>
-                  <Link href={`/rooms/${room.id}`}>Details</Link>
+                  <Link href={`/rooms/${item.id}`}>Details</Link>
                 </Button>
               </CardFooter>
             </Card>
