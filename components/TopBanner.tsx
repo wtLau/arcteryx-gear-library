@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react'
+import Link from 'next/link';
 
 const Banner = styled.div`
   display: flex;
@@ -12,6 +13,12 @@ const Banner = styled.div`
   text-align: center;
 `;
 
+const StyledLink = styled(Link)`
+  color: white!important;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+`
+
 interface TopBannerProps {
   heading: string;
 }
@@ -19,7 +26,7 @@ interface TopBannerProps {
 export default function TopBanner({ heading }: TopBannerProps) {
   return (
     <Banner>
-      {heading}
+      <StyledLink href="/">{heading}</StyledLink>
     </Banner>
   )
 }
