@@ -42,7 +42,7 @@ export const StyledCalendarWrapper = styled.div`
 
   .react-calendar__month-view__days__day.booked {
     color: currentColor !important;
-    background: rgba(240, 128, 128, 0.60);
+    background: #fee2e2;
   }
 
 

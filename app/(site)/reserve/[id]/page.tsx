@@ -32,6 +32,10 @@ const Title = styled.h1`
   font-weight: 700;
 `;
 
+const GearHeading = styled.h3`
+	margin: 0;
+`
+
 const CalendarLabel = styled.h3`
 	font-size: 1.75rem;
 	margin: 0;
@@ -189,7 +193,9 @@ function ReservePage() {
 
       <StyledCard>
 				<CardHeader>
-					<CardTitle>{item?.name}</CardTitle>
+					<CardTitle>
+						<GearHeading>{item?.name}</GearHeading>
+					</CardTitle>
 				</CardHeader>
         <CardContent>
           <StyledCalendar

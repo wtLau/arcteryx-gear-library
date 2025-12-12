@@ -5,6 +5,7 @@ import Calendar, { CalendarProps } from 'react-calendar'
 import {
   StyledCalendarWrapper,
 } from "./calendar.styles";
+import { CalendarBookingLegend } from "./calendarBookingLegend";
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react";
 
 type StyledCalendarProps = CalendarProps & {
@@ -48,6 +49,7 @@ export function StyledCalendar({ disabledDates, ...props }: StyledCalendarProps)
           }
         }
       />
+      <CalendarBookingLegend/>
     </StyledCalendarWrapper>
   );
 }

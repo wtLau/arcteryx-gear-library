@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image";
 import { styled } from '@linaria/react'
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -81,7 +82,7 @@ export default function Navbar() {
         <Logo href="/">
           <span>Makaya BNB</span>
         </Logo>
-        
+
         <NavLinks>
           <NavLink href="/">
             Home
