@@ -186,7 +186,7 @@ export default function ActivityPage() {
       title: "Hiking",
       description: "Hit the trails with hiking boots, backpacks, and essential hiking gear for all terrains.",
       buttonText: "Hike On",
-      href: "/activity/hiking",
+      href: "/activity/1038db47-42ca-476a-9225-f807d0f29814",
       category: "Hiking"
     },
     {
