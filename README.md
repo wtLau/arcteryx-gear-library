@@ -1,4 +1,4 @@
-# Makaya BNB 🏠
+# Arc'teryx Gear Library 🏠
 
 A professional Airbnb-style booking website built with the modern web stack: **Next.js 16**, **TypeScript**, **Supabase**, **Tailwind CSS v4**, and **shadcn/ui**.
 
@@ -35,12 +35,14 @@ A professional Airbnb-style booking website built with the modern web stack: **N
 ### Installation
 
 1. **Clone the repository**
+
 ```bash
 git clone <your-repo-url>
 cd makaya-bnb
 ```
 
 2. **Install dependencies**
+
 ```bash
 npm install
 ```
@@ -86,6 +88,7 @@ create table bookings (
 ```
 
 5. **Run the development server**
+
 ```bash
 npm run dev
 ```
@@ -138,11 +141,13 @@ npx shadcn@latest add <component-name>
 ```
 
 **Example:**
+
 ```bash
 npx shadcn@latest add button
 ```
 
 **Usage:**
+
 ```typescript
 import { Button } from "@/components/ui/button"
 
@@ -157,11 +162,12 @@ export default function Home() {
 Accordion, Alert Dialog, Alert, Aspect Ratio, Avatar, Badge, Breadcrumb, Button Group, Button, Calendar, Card, Carousel, Chart, Checkbox, Collapsible, Combobox, Command, Context Menu, Data Table, Date Picker, Dialog, Drawer, Dropdown Menu, Empty, Field, Form, Hover Card, Input Group, Input OTP, Input, Item, Kbd, Label, Menubar, Native Select, Navigation Menu, Pagination, Popover, Progress, Radio Group, Resizable, Scroll Area, Select, Separator, Sheet, Sidebar, Skeleton, Slider, Sonner, Spinner, Switch, Table, Tabs, Textarea, Toast, Toggle Group, Toggle, Tooltip, Typography
 
 **Quick Install for Next Features:**
+
 ```bash
 # For booking page
 npx shadcn@latest add calendar date-picker form input label select
 
-# For admin dashboard  
+# For admin dashboard
 npx shadcn@latest add table dialog toast tabs
 
 # For better UX
@@ -192,6 +198,7 @@ See `WARP.md` for detailed implementation guide.
 ### Environment Variables for Production
 
 Don't forget to add these in your Vercel dashboard:
+
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `RESEND_API_KEY` (for emails)
@@ -199,6 +206,7 @@ Don't forget to add these in your Vercel dashboard:
 ## ✅ What's Built
 
 ### Phase 1 - Complete ✅
+
 - ✅ **Project Structure** - Professional directory organization with route groups
 - ✅ **Landing Page** - Hero, Features, Rooms, Location, CTA sections
 - ✅ **Layout Components** - Navbar and Footer
@@ -208,6 +216,7 @@ Don't forget to add these in your Vercel dashboard:
 - ✅ **Development Setup** - All dependencies installed and configured
 
 ### Phase 2 - Frontend Pages Complete ✅
+
 - ✅ **Rooms Page** (`/rooms`) - Full listings with Supabase integration, filters, and sorting
 - ✅ **Booking Page** (`/booking`) - Complete booking flow with date picker, room selection, and form validation
 - ✅ **About Page** (`/about`) - Property information, amenities, house rules, and location benefits
@@ -216,23 +225,27 @@ Don't forget to add these in your Vercel dashboard:
 ## 🛣️ Roadmap
 
 ### Phase 2 - Core Pages ✅ COMPLETE
+
 - ✅ **Rooms Page** (`/rooms`) - Full listings with filters
 - ✅ **Booking Page** (`/booking`) - Date picker and booking form
 - ✅ **About Page** (`/about`) - Property information
 - ✅ **Contact Page** (`/contact`) - Contact form
 
 ### Phase 3 - API Routes
+
 - [ ] `POST /api/bookings` - Create booking
-- [ ] `GET /api/availability` - Check room availability  
+- [ ] `GET /api/availability` - Check room availability
 - [ ] `POST /api/email` - Send confirmation emails
 
 ### Phase 4 - Admin Dashboard
+
 - [ ] Admin authentication with Supabase Auth
 - [ ] Dashboard overview with stats
 - [ ] Bookings management table
 - [ ] Room management (CRUD operations)
 
 ### Phase 5 - Enhancements
+
 - [ ] Payment integration (Stripe/PayMongo)
 - [ ] Email notifications
 - [ ] Guest reviews system
