@@ -147,7 +147,7 @@ export default function ActivityPage() {
       console.log(flattenedData);
 
       if (error) throw error;
-      setCategory(flattenedData as unknown);
+      setCategory(flattenedData as any);
     } catch (error) {
       console.error("Error fetching category:", error);
     } finally {
