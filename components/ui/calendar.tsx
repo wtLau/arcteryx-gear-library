@@ -1,100 +1,55 @@
-"use client";
+'use client';
 
 import * as React from "react";
-
+import Calendar, { CalendarProps } from 'react-calendar'
 import {
   StyledCalendarWrapper,
-  StyledDayPicker,
-  ChevronButton,
-  StyledDayButton,
 } from "./calendar.styles";
+import { CalendarBookingLegend } from "./calendarBookingLegend";
+import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react";
 
-import {
-  DayPicker,
-  type DayButtonProps,
-  type ChevronProps,
-} from "react-day-picker";
-
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronDownIcon,
-} from "lucide-react";
-
-export interface CalendarComponents {
-  Root?: React.ComponentType<
-    React.HTMLAttributes<HTMLDivElement>
-  >;
-  Chevron?: React.ComponentType<ChevronProps>;
-  DayButton?: React.ComponentType<DayButtonProps>;
-}
-
-type DayPickerComponentProps = React.ComponentProps<typeof DayPicker>;
-
-export type CalendarProps = DayPickerComponentProps & {
-  components?: Partial<CalendarComponents>;
+type StyledCalendarProps = CalendarProps & {
+  disabledDates?: Date[];
 };
 
+export function StyledCalendar({ disabledDates, ...props }: StyledCalendarProps) {
 
-function Calendar({ components = {}, ...props }: CalendarProps) {
   return (
     <StyledCalendarWrapper>
-      <StyledDayPicker
+      <Calendar
         {...props}
-        showOutsideDays={props.showOutsideDays ?? true as boolean}
-        components={{
-          Root: (rootProps: any) => <div {...rootProps} />,
-          Chevron: ({ orientation, ...iconProps }: any) => {
-            const Icon =
-              orientation === "left"
-                ? ChevronLeftIcon
-                : orientation === "right"
-                ? ChevronRightIcon
-                : ChevronDownIcon;
+        minDate={new Date()}
+        prev2Label={null}
+        next2Label={null}
+        locale="en-US"
+        tileDisabled={({ date }) =>
+          (disabledDates || []).some(
+            (d) =>
+              date.getFullYear() === d.getFullYear() &&
+              date.getMonth() === d.getMonth() &&
+              date.getDate() === d.getDate()
+          )
+        }
+        tileClassName={({ date }) => {
+          // Days in the past
+          if (date < new Date()) return "past";
 
-            return (
-              <ChevronButton variant="ghost">
-                <Icon {...iconProps} />
-              </ChevronButton>
-            );
-          },
-          DayButton: CalendarDayButton,
-          ...components,
-        }}
+            // Disabled due to bookings
+            if (
+              (disabledDates || []).some(
+                (d) =>
+                  date.getFullYear() === d.getFullYear() &&
+                  date.getMonth() === d.getMonth() &&
+                  date.getDate() === d.getDate()
+              )
+            )
+              return "booked";
+
+            return "";
+          }
+        }
       />
+      <CalendarBookingLegend/>
     </StyledCalendarWrapper>
   );
 }
-
-function CalendarDayButton({
-  day,
-  modifiers,
-  ...props
-}: DayButtonProps) {
-  const ref = React.useRef<HTMLButtonElement>(null);
-
-  React.useEffect(() => {
-    if (modifiers.focused) ref.current?.focus();
-  }, [modifiers.focused]);
-
-  return (
-    <StyledDayButton
-      ref={ref}
-      variant="ghost"
-      size="icon"
-      data-day={day.date.toLocaleDateString()}
-      data-selected-single={
-        modifiers.selected &&
-        !modifiers.range_start &&
-        !modifiers.range_end &&
-        !modifiers.range_middle
-      }
-      data-range-start={modifiers.range_start}
-      data-range-end={modifiers.range_end}
-      data-range-middle={modifiers.range_middle}
-      {...props}
-    />
-  );
-}
-
-export { Calendar, CalendarDayButton };

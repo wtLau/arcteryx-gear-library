@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link"
 import { supabase } from "@/lib/supabase";
 import { use, useEffect, useState, useCallback } from "react";
 import { Card } from "@/components/ui/card";
@@ -78,7 +79,7 @@ const BookingInfo = styled.div`
   font-size: 0.875rem;
 `;
 
-const CheckButton = styled.button`
+const CheckLink = styled(Link)`
   width: 100%;
   display: flex;
   align-items: center;
@@ -222,7 +223,7 @@ export default function Page({
       <Grid>
         {items.map((item) => {
           const bookingCount = getBookingCount(item.id);
-          
+
           return (
             <Card key={item.id} style={{ padding: 0, transition: 'box-shadow 0.15s ease' }}>
               <CardContent>
@@ -240,10 +241,10 @@ export default function Page({
                   <span>{bookingCount} dates booked</span>
                 </BookingInfo>
 
-                <CheckButton>
+                <CheckLink href={`/reserve/${item.id}`}>
                   <span>Check availability</span>
                   <ChevronRight size={16} />
-                </CheckButton>
+                </CheckLink>
               </CardContent>
             </Card>
           );

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { styled } from '@linaria/react'
+import { Item, Booking } from "@/lib/supabase";
+import { LOCAL_STORAGE_KEY } from "@/lib/constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -188,32 +190,29 @@ const ConfirmationBox = styled.div`
 
 
 
-interface CartItem {
-  id: string;
-  name: string;
-  category: string;
-  startDate: string;
-  endDate: string;
+interface StorageItem {
+  item: Omit<Item, "bookings">;
+  booking: Booking
 }
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [storageItem, setStorageItem] = useState<StorageItem[]>([]);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
 
   useEffect(() => {
     // Load cart items from localStorage
     const loadCartItems = () => {
-      const savedItems = localStorage.getItem('cartItems');
+      const savedItems = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (savedItems) {
         try {
-          setCartItems(JSON.parse(savedItems));
+          setStorageItem(JSON.parse(savedItems));
         } catch (error) {
           console.error('Error parsing cart items:', error);
         }
       }
     };
-    
+
     loadCartItems();
   }, []);
 
@@ -227,10 +226,10 @@ export default function CartPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
     });
   };
 
@@ -242,15 +241,15 @@ export default function CartPage() {
 
     // Here you would typically send the booking data to your backend
     console.log('Booking confirmed:', {
-      items: cartItems,
+      items: storageItem,
       customer: { fullName, email }
     });
 
     alert('Booking confirmed! You will receive a confirmation email.');
-    
+
     // Clear cart after successful booking
     localStorage.removeItem('cartItems');
-    setCartItems([]);
+    setStorageItem([]);
     setFullName('');
     setEmail('');
   };
@@ -267,7 +266,7 @@ export default function CartPage() {
         <ItemsCard>
           <CardHeader>
             <ItemsHeader>
-              <h2>Your Items ({cartItems.length})</h2>
+              <h2>Your Items ({storageItem.length})</h2>
               <AddMoreButton>
                 <Plus size={16} />
                 <Link href="/activity">Add more items</Link>
@@ -275,24 +274,26 @@ export default function CartPage() {
             </ItemsHeader>
           </CardHeader>
           <CardContent>
-            {cartItems.length === 0 ? (
+            {storageItem.length === 0 ? (
               <p style={{ color: 'var(--muted-foreground)', textAlign: 'center', padding: '2rem' }}>
                 Your cart is empty
               </p>
             ) : (
-              cartItems.map((item) => {
-                const days = calculateDays(item.startDate, item.endDate);
+              storageItem.map(({ item, booking }) => {
+                const days = calculateDays(booking.check_in, booking.check_out);
                 return (
-                  <ItemContainer key={item.id}>
-                    <ItemIcon>
-                      <Package size={20} />
-                    </ItemIcon>
+                  <ItemContainer key={booking.id}>
+                    <Package size={20} />
                     <ItemDetails>
                       <h3>{item.name}</h3>
-                      <div className="category">{item.category}</div>
+                      <div>
+                        {item.category?.map((label) =>
+                          <div key={label.id} className="category">{label.name}</div>
+                        )}
+                      </div>
                       <div className="dates">
                         <Calendar size={16} />
-                        {formatDate(item.startDate)} - {formatDate(item.endDate)}
+                        {formatDate(booking.check_in)} - {formatDate(booking.check_out)}
                       </div>
                       <div className="duration">
                         {days} {days === 1 ? 'day' : 'days'}
@@ -350,7 +351,7 @@ export default function CartPage() {
                 </ul>
               </ConfirmationBox>
 
-              <Button 
+              <Button
                 onClick={handleConfirmBooking}
                 style={{
                   width: '100%',
