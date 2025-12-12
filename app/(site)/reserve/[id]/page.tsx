@@ -1,9 +1,9 @@
 "use client"
 
-import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-
+import React, { useEffect, useState, useCallback } from "react";
 import { styled } from "@linaria/react";
+import { LOCAL_STORAGE_KEY } from "@/lib/constants";
 import { supabase, Item, Booking } from "@/lib/supabase";
 import { StyledCalendar } from "@/components/ui/calendar";
 import "react-calendar/dist/Calendar.css";
@@ -49,7 +49,7 @@ function ReservePage() {
 
   const [bookings, setBookings] = useState<Pick<Booking, "check_in" | "check_out">[]>([]);
 	const [isSaving, setIsSaving] = useState<boolean>(false);
-	const [item, setItem] = useState<Item | null>(null);
+	const [item, setItem] = useState<Omit<Item, "bookings"> | null>(null);
   const [selectedRange, setSelectedRange] = useState<Pick<Booking, "check_in" | "check_out">>();
 
   const fetchBookingsByItemId = useCallback(async (itemId: string) => {
@@ -71,14 +71,32 @@ function ReservePage() {
 		try {
 			const { data, error } = await supabase
 				.from("items")
-				.select("*")
+				.select(
+					` id,
+						name,
+						description,
+						image,
+						created_at,
+						category:item_categories(
+							category:categories(*)
+						),
+						bookings(*)
+					`
+				)
 				.eq("id", itemId)
 				.single();
 
 			if (error) throw error;
 			console.log(">>>> item: ", data);
-
-			setItem(data);
+			const formattedItem: Omit<Item, "bookings"> = {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      image: data.image,
+      created_at: new Date(data.created_at),
+      category: data.category.map((c: any) => c.category),
+    };
+			setItem(formattedItem);
 		} catch (error) {
 			console.error("Error fetching item:", error);
 		}
@@ -149,7 +167,7 @@ function ReservePage() {
 
 				cartWithoutDuplicate.push(bookingToSave);
 
-				localStorage.setItem("CartBooking", JSON.stringify(cartWithoutDuplicate));
+				localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cartWithoutDuplicate));
 				router.push("/cart");
 			} catch (error) {
 				console.error("Error saving booking to localStorage:", error);
