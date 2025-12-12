@@ -120,7 +120,7 @@ const ActivityGrid = styled.div`
 `;
 
 export default function ActivityPage() {
-      const [category, setCategory] = useState<any[]>([]);
+  const [category, setCategory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -147,7 +147,7 @@ export default function ActivityPage() {
       console.log(flattenedData);
 
       if (error) throw error;
-      setCategory(flattenedData as any);
+      setCategory(flattenedData as unknown);
     } catch (error) {
       console.error("Error fetching category:", error);
     } finally {
@@ -155,50 +155,65 @@ export default function ActivityPage() {
     }
   }
 
-  const activities = [
+  // All possible activities with their metadata
+  const allActivities = [
     {
       icon: Tent,
       title: "Camping",
       description: "Sleep under the stars with quality tents, sleeping bags, and camping essentials.",
       buttonText: "Camp Gear",
-      href: "/search?category=camping"
+      href: "/activity/camping",
+      category: "Camping"
     },
     {
       icon: Waves,
       title: "Water Sports",
       description: "Make a splash with kayaks, surfboards, diving gear, and water equipment.",
       buttonText: "Dive In",
-      href: "/search?category=water-sports"
+      href: "/activity/water-sports",
+      category: "Water Sports"
     },
     {
       icon: Bike,
       title: "Cycling",
       description: "Explore trails and roads with our premium bikes, helmets, and cycling gear for all skill levels.",
       buttonText: "Browse Bikes",
-      href: "/search?category=cycling"
+      href: "/activity/cycling",
+      category: "Cycling"
     },
     {
       icon: Mountain,
       title: "Hiking",
       description: "Hit the trails with hiking boots, backpacks, and essential hiking gear for all terrains.",
       buttonText: "Hike On",
-      href: "/search?category=hiking"
+      href: "/activity/hiking",
+      category: "Hiking"
     },
     {
       icon: Snowflake,
       title: "Winter Sports",
       description: "Embrace the cold with skis, snowboards, winter clothing, and snow gear.",
       buttonText: "Hit Slopes",
-      href: "/search?category=winter-sports"
+      href: "/activity/winter-sports",
+      category: "Winter Sports"
     },
     {
       icon: Pickaxe,
       title: "Climbing",
       description: "Conquer peaks with professional climbing gear, ropes, harnesses, and safety equipment.",
       buttonText: "Climb High",
-      href: "/search?category=climbing"
+      href: "/activity/climbing",
+      category: "Climbing"
     }
   ];
+
+  // Get unique categories from fetched data
+  const availableCategories = [...new Set(category.map(item => item.category))];
+  
+  // Filter activities to only show those with available items
+  const activities = allActivities.filter(activity => 
+    availableCategories.includes(activity.category)
+  );
 
   return (
     <PageContainer>
