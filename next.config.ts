@@ -1,7 +1,11 @@
 import withLinaria, { LinariaConfig } from 'next-with-linaria';
 
+// List the packages that need transpiling (react-day-picker & date-fns)
+const transpilePackages = ['react-day-picker', 'date-fns'];
+
 const nextConfig: LinariaConfig = {
-  /* config options here */
+  transpilePackages,
+  reactStrictMode: true,
   linaria: {
     fastCheck: false,
   },
